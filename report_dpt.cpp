@@ -6,8 +6,10 @@
 #include <string>
 #include <string_view>
 
+#include <iostream>
+
 namespace {
-template <std::size_t width = 50, std::size_t margin = 10>
+template <std::size_t width = 50, std::size_t margin = 8>
 struct horizontal_table_buffer {
     int table_count{0};
     std::size_t index{0};
@@ -23,12 +25,13 @@ struct horizontal_table_buffer {
     }
     void new_table() {
         table_count++;
+
         index = 0;
         for (const auto& line : lines) {
             actual_width = std::max(width, line.size());
         }
         for (auto& line : lines) {
-            line += std::string((std::max(actual_width, width) + margin) - line.size(), ' ');
+            line += std::string((std::max((table_count - 1) * width, actual_width) + margin) - line.size(), ' ');
         }
     }
     void to_stream(std::ostream& os) const {
@@ -45,6 +48,7 @@ void language_mentions_overview(std::ostream& os, const dpt::statistics& stats) 
     const std::size_t index_numbers = 4;
     const std::size_t column_width = 7;
     const std::size_t column_height = 20;
+    const std::size_t bar_width = 2;
     const char bar_character = 178;
     const std::size_t name_rows = 2;
     std::size_t max_mentions = 0;
@@ -76,7 +80,7 @@ void language_mentions_overview(std::ostream& os, const dpt::statistics& stats) 
 
         for (const auto& [language, mentions] : stats.language_mentions) {
             if (mentions >= min_mentions) {
-                os << std::left << std::setw(column_width) << std::string(2, bar_character);
+                os << std::left << std::setw(column_width) << std::string(bar_width, bar_character);
             } else if (mentions >= next_min_mentions) {
                 os << std::left << std::setw(column_width) << mentions;
             } else {
@@ -142,6 +146,7 @@ void report(std::ostream& os, const dpt::statistics& stats) {
         horizontal_table_buffer buffer{};
         basic_table_overview(buffer, stats.topic_discussions, "Topics discussed", "discussed");
         basic_table_overview(buffer, stats.meme_posts, "Irrelevant posts", "posted");
+        basic_table_overview(buffer, stats.buzzwords, "Buzzwords", "counted");
         buffer.to_stream(os);
     }
     os << std::endl;

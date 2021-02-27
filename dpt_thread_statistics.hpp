@@ -27,6 +27,7 @@ struct statistics {
     mentions_counter topic_discussions;
     mentions_counter insults;
     mentions_counter programming_jokes;
+    mentions_counter buzzwords;
 
     std::size_t n_code_snippets;
 

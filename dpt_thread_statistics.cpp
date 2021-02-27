@@ -8,7 +8,9 @@
 
 namespace dpt {
 statistics::statistics(unsigned int id, std::string_view&& title, std::string_view&& timestamp)
-: id{id}, title{title}, timestamp{timestamp}, posts{}, language_mentions{}, meme_posts{}, topic_discussions{}, insults{}, programming_jokes{}, n_code_snippets{0} {}
+: id{id}, title{title}, timestamp{timestamp}, posts{},
+  language_mentions{}, meme_posts{}, topic_discussions{}, insults{}, programming_jokes{}, buzzwords{},
+  n_code_snippets{0} {}
 
 statistics::post::post(std::string_view&& text, bool quotes, bool quotes_op)
 : text{text}, quotes{quotes}, quotes_op{quotes_op} {}

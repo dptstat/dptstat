@@ -60,8 +60,10 @@ const search_values programming_languages = {
     {"Elixir"       , {"elixir"                          }, policy_standard},
     {"Erlang"       , {"erlang"                          }, policy_standard},
     {"F#"           , {"f#"                              }, policy_standard},
+    {"Forth"        , {"forth"                           }, policy_substring_risk},
     {"Fortran"      , {"fortran"                         }, policy_standard},
     {"GLSL"         , {"glsl"                            }, policy_standard},
+    {"Golang"       , {"golang"                          }, policy_standard},
     {"Haskell"      , {"haskell"                         }, policy_standard},
     {"HolyC"        , {"holyc"                           }, policy_standard},
     {"HTML"         , {"html"                            }, policy_standard},
@@ -88,7 +90,7 @@ const search_values programming_languages = {
     {"Ruby"         , {"ruby"                            }, policy_standard},
     {"Rust"         , {"rust"                            }, policy_standard},
     {"Scala"        , {"scala"                           }, policy_standard},
-    {"Scheme"       , {"scheme"                          }, policy_standard},
+    {"Scheme"       , {"Scheme"                          }, policy_case_sensitive},
     {"Smalltalk"    , {"smalltalk"                       }, policy_standard},
     {"SQL"          , {"sql"                             }, policy_standard},
     {"Swift"        , {"swift"                           }, policy_standard},
@@ -126,16 +128,19 @@ const search_values topics = {
     {"CMake"                 , {"cmake"             }, policy_standard},
     {"Makefiles"             , {"makefile"          }, policy_standard},
     {"Monads"                , {"monad"             }, policy_standard},
-    {"SOLID"                 , {"SOLID"             }, policy_case_sensitive}
+    {"SOLID"                 , {"SOLID"             }, policy_case_sensitive},
+    {"OpenGL"                , {"opengl"            }, policy_standard},
+    {"Metaprogramming"       , {"metaprogramming"   }, policy_standard},
+    {"Vulkan"                , {"vulkan"            }, policy_standard}
 };
 const search_values programming_jokes = {
-    {"Fizz"       , {"fizz"       }, policy_lowercase | policy_simple_count | policy_count_all , {"fizzbuzz"}},
-    {"Buzz"       , {"buzz"       }, policy_lowercase | policy_simple_count | policy_count_all , {"fizzbuzz"}},
-    {"FizzBuzz"   , {"fizzbuzz"   }, policy_lowercase | policy_simple_count | policy_count_all},
-    {"Foo"        , {"foo"        }, policy_substring_risk                                     , {"foobar"}},
-    {"Bar"        , {"bar"        }, policy_substring_risk                                     , {"foobar"}},
-    {"FooBar"     , {"foobar"     }, policy_standard},
-    {"Hello World", {"hello world"}, policy_sentence}
+    {"Fizz"       , {"fizz"       }, (policy_standard &~ policy_unique) | policy_count_all ,      {"fizzbuzz"}},
+    {"Buzz"       , {"buzz"       }, (policy_standard &~ policy_unique) | policy_count_all ,      {"fizzbuzz"}},
+    {"FizzBuzz"   , {"fizzbuzz"   }, (policy_standard &~ policy_unique) | policy_count_all},
+    {"Foo"        , {"foo"        }, (policy_substring_risk &~ policy_unique) | policy_count_all, {"foobar"}},
+    {"Bar"        , {"bar"        }, (policy_substring_risk &~ policy_unique) | policy_count_all, {"foobar"}},
+    {"FooBar"     , {"foobar"     }, (policy_standard &~ policy_unique) | policy_count_all},
+    {"Hello World", {"hello world"}, (policy_sentence &~ policy_unique) | policy_count_all}
 };
 const search_values insults = {
     {"Cniles"        , {"cnile", "c-nile"              }, policy_standard},
@@ -149,6 +154,12 @@ const search_values insults = {
     {"Blacks"        , {"nigger"                       }, policy_standard},
     {"Asians"        , {"chink"                        }, policy_standard},
     {"Web developers", {"webshit"                      }, policy_standard}
+};
+
+const search_values buzzwords = {
+    {"Based"  , {"based" }, policy_standard},
+    {"Seethe" , {"seeth" }, policy_standard},
+    {"Cringe" , {"cringe"}, policy_standard}
 };
 } // namespace definitions
 
@@ -247,6 +258,9 @@ void analyse(dpt::statistics& stats) {
         }
         for (const auto& search_val : definitions::programming_jokes) {
             search_helper(stats.programming_jokes, post.text, search_val);
+        }
+        for (const auto& search_val : definitions::buzzwords) {
+            search_helper(stats.buzzwords, post.text, search_val);
         }
         stats.n_code_snippets += toolbox::string::count(post.text, "class=\"prettyprint\"");
     }
