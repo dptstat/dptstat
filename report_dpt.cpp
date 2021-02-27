@@ -6,8 +6,6 @@
 #include <string>
 #include <string_view>
 
-#include <iostream>
-
 namespace {
 template <std::size_t width = 50, std::size_t margin = 8>
 struct horizontal_table_buffer {
